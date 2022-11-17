@@ -1,7 +1,7 @@
 export interface Order {
   _id: string;
   table: string;
-  status: string;
+  status: 'WAITING' | 'IN_PRODUCTION' | 'DONE';
   products: {
     _id: string;
     quantity: number;
@@ -9,6 +9,6 @@ export interface Order {
       name: string;
       imagePath: string;
       price: number;
-    }
+    };
   }[];
 }
