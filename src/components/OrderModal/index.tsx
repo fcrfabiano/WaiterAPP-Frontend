@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { KeyboardEvent, useEffect } from 'react';
 
 import { Overlay, ModalBody, OrderDetails, Actions } from './styles';
 import closeIcon from '../../assets/images/close-icon.svg';
@@ -11,7 +11,25 @@ interface OrderModalProps {
   handleCloseOrderModal: () => void;
 }
 
+interface KeyboardEvent {
+  key: string;
+  stopPropagation: () => void;
+}
+
 export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModalProps) {
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        handleCloseOrderModal();
+      }
+      event.stopPropagation();
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleCloseOrderModal]);
+
   if (!visible || !order) {
     return null;
   }
@@ -22,7 +40,7 @@ export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModal
   );
 
   return (
-    <Overlay>
+    <Overlay onClick={ handleCloseOrderModal }>
       <ModalBody>
         <header>
           <strong>Mesa {order.table}</strong>
