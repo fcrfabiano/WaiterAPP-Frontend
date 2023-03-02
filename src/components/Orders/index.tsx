@@ -1,74 +1,28 @@
+import { useEffect, useState } from 'react';
+import { api } from '../../assets/services/api';
 import { Order } from '../../types/Order';
 import { OrdersBoard } from '../OrdersBoard';
 
 import { Container } from './styles';
 
-const orders: Order[] = [
-  {
-    _id: '63742fa01c0d7e7484f0edc7',
-    table: '01',
-    status: 'WAITING',
-    products: [
-      {
-        product: {
-          name: 'Pizza Quatro Queijos',
-          imagePath: '1668556758387-quatro-queijos.png',
-          price: 40,
-        },
-        quantity: 1,
-        _id: '63742fa01c0d7e7484f0edc8',
-      },
-      {
-        product: {
-          name: 'Madero Strawberry',
-          imagePath: '1668557503628-strawberry.webp',
-          price: 36,
-        },
-        quantity: 4,
-        _id: '63742fa01c0d7e7484f0edc9',
-      },
-    ],
-  },
-  {
-    _id: '637432d8c289fdb70c630025',
-    table: '02',
-    status: 'WAITING',
-    products: [
-      {
-        product: {
-          name: 'Madero Strawberry',
-          imagePath: '1668557503628-strawberry.webp',
-          price: 36,
-        },
-        quantity: 1,
-        _id: '637432d8c289fdb70c630026',
-      },
-    ],
-  },
-  {
-    _id: '637432f1f4d07579082325d1',
-    table: '02',
-    status: 'WAITING',
-    products: [
-      {
-        product: {
-          name: 'Madero Strawberry',
-          imagePath: '1668557503628-strawberry.webp',
-          price: 36,
-        },
-        quantity: 1,
-        _id: '637432f1f4d07579082325d2',
-      },
-    ],
-  },
-];
-
 export function Orders() {
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    api.get('/orders')
+      .then(({ data }) => setOrders(data))
+      .catch((error) => console.log(error));
+  }, []);
+
+  const waiting = orders.filter((order) => order.status === 'WAITING');
+  const production = orders.filter((order) => order.status === 'IN_PRODUCTION');
+  const done = orders.filter((order) => order.status === 'DONE');
+
   return (
     <Container>
-      <OrdersBoard icon="🕗" title="Fila de espera" orders={orders} />
-      <OrdersBoard icon="👩‍🍳" title="Em produção" orders={[]} />
-      <OrdersBoard icon="✅" title="Pronto!" orders={[]} />
+      <OrdersBoard icon="🕗" title="Fila de espera" orders={waiting} />
+      <OrdersBoard icon="👩‍🍳" title="Em produção" orders={production} />
+      <OrdersBoard icon="✅" title="Pronto!" orders={done} />
     </Container>
   );
 }
