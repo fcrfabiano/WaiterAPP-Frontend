@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { Overlay, ModalBody, OrderDetails, Actions } from './styles';
 import closeIcon from '../../assets/images/close-icon.svg';
@@ -9,6 +9,8 @@ interface OrderModalProps {
   visible: boolean;
   order: Order | null;
   handleCloseOrderModal: () => void;
+  onCancelOrder: () => void;
+  loading: boolean;
 }
 
 interface KeyboardEvent {
@@ -16,7 +18,13 @@ interface KeyboardEvent {
   stopPropagation: () => void;
 }
 
-export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModalProps) {
+export function OrderModal({
+  visible,
+  order,
+  handleCloseOrderModal,
+  onCancelOrder,
+  loading,
+}: OrderModalProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -40,7 +48,7 @@ export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModal
   );
 
   return (
-    <Overlay onClick={ handleCloseOrderModal }>
+    <Overlay onClick={handleCloseOrderModal}>
       <ModalBody>
         <header>
           <strong>Mesa {order.table}</strong>
@@ -48,7 +56,7 @@ export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModal
             <img
               src={closeIcon}
               alt="Fechar modal"
-              onClick={ handleCloseOrderModal }
+              onClick={handleCloseOrderModal}
             />
           </button>
         </header>
@@ -99,12 +107,17 @@ export function OrderModal({ visible, order, handleCloseOrderModal }: OrderModal
         </OrderDetails>
 
         <Actions>
-          <button className="primary">
+          <button type="button" className="primary" disabled={loading}>
             <span>👩‍🍳</span>
             <strong>Iniciar Produção</strong>
           </button>
 
-          <button className="secondary">
+          <button
+            type="button"
+            className="secondary"
+            disabled={loading}
+            onClick={onCancelOrder}
+          >
             Cancelar Pedido
           </button>
         </Actions>

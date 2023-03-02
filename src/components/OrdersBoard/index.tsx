@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { api } from '../../assets/services/api';
 
 import { Order } from '../../types/Order';
 import { OrderModal } from '../OrderModal';
@@ -8,11 +9,13 @@ interface OrdersBoardProps {
   icon: string;
   title: string;
   orders: Order[];
+  onCancelOrder: (orderId: string) => void;
 }
 
-export function OrdersBoard({ icon, title, orders }: OrdersBoardProps) {
+export function OrdersBoard({ icon, title, orders, onCancelOrder }: OrdersBoardProps) {
   const [isOpenOrderModal, setIsOpenOrderModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleOpenOrderModal(order: Order) {
     setIsOpenOrderModal((prevState) => !prevState);
@@ -24,12 +27,24 @@ export function OrdersBoard({ icon, title, orders }: OrdersBoardProps) {
     setSelectedOrder(null);
   }
 
+  async function handleCancelOrder() {
+    setIsLoading(true);
+
+    await api.delete(`/orders/${selectedOrder?._id}`);
+
+    onCancelOrder(selectedOrder!._id);
+    setIsLoading(false);
+    setIsOpenOrderModal(false);
+  }
+
   return (
     <Board>
       <OrderModal
         visible={isOpenOrderModal}
         order={selectedOrder}
-        handleCloseOrderModal={ handleCloseOrderModal }
+        handleCloseOrderModal={handleCloseOrderModal}
+        onCancelOrder={handleCancelOrder}
+        loading={isLoading}
       />
 
       <header>
