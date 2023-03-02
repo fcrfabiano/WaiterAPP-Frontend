@@ -24,6 +24,14 @@ export function Orders() {
     );
   }
 
+  function handleOrderStatusChange(orderId: string, status: Order['status']) {
+    setOrders((prevState) => prevState.map((order) => (
+      order._id === orderId
+        ? { ...order, status }
+        : order
+    )));
+  }
+
   return (
     <Container>
       <OrdersBoard
@@ -31,18 +39,21 @@ export function Orders() {
         title="Fila de espera"
         orders={waiting}
         onCancelOrder={handleCancelOrder}
+        onChangeOrderStatus={handleOrderStatusChange}
       />
       <OrdersBoard
         icon="👩‍🍳"
         title="Em produção"
         orders={production}
         onCancelOrder={handleCancelOrder}
+        onChangeOrderStatus={handleOrderStatusChange}
       />
       <OrdersBoard
         icon="✅"
         title="Pronto!"
         orders={done}
         onCancelOrder={handleCancelOrder}
+        onChangeOrderStatus={handleOrderStatusChange}
       />
     </Container>
   );
