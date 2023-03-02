@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react';
 import { api } from '../../assets/services/api';
 import { Order } from '../../types/Order';
 import { OrdersBoard } from '../OrdersBoard';
+import socketIo from 'socket.io-client';
 
 import { Container } from './styles';
 
 export function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+
+  }, []);
 
   useEffect(() => {
     api.get('/orders')
