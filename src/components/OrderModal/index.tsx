@@ -11,12 +11,13 @@ interface OrderModalProps {
   handleCloseOrderModal: () => void;
   onCancelOrder: () => void;
   loading: boolean;
+  onChangeOrderStatus: () => void;
 }
 
-interface KeyboardEvent {
-  key: string;
-  stopPropagation: () => void;
-}
+// interface KeyboardEvent {
+//   key: string;
+//   stopPropagation: () => void;
+// }
 
 export function OrderModal({
   visible,
@@ -24,6 +25,7 @@ export function OrderModal({
   handleCloseOrderModal,
   onCancelOrder,
   loading,
+  onChangeOrderStatus,
 }: OrderModalProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -46,6 +48,16 @@ export function OrderModal({
     (acc, curr) => acc + curr.quantity * curr.product.price,
     0
   );
+
+  const orderStatusIcon = {
+    WAITING: '👩‍🍳',
+    IN_PRODUCTION: '✅',
+  };
+
+  const orderStatusText = {
+    WAITING: 'Iniciar Produção',
+    IN_PRODUCTION: 'Concluir Pedido',
+  };
 
   return (
     <Overlay onClick={handleCloseOrderModal}>
@@ -107,10 +119,21 @@ export function OrderModal({
         </OrderDetails>
 
         <Actions>
-          <button type="button" className="primary" disabled={loading}>
-            <span>👩‍🍳</span>
-            <strong>Iniciar Produção</strong>
-          </button>
+          {order.status !== 'DONE' && (
+            <button
+              type="button"
+              className="primary"
+              disabled={loading}
+              onClick={onChangeOrderStatus}
+            >
+              <span>
+                {orderStatusIcon[order.status]}
+              </span>
+              <strong>
+                {orderStatusText[order.status]}
+              </strong>
+            </button>
+          )}
 
           <button
             type="button"
